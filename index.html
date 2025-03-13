@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obscura: Privacy Protection System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --primary-light: #6384b8;
+            --secondary: #5d9cec;
+            --accent: #ff5e7d;
+            --light: #f5f8fa;
+            --dark: #2d3e50;
+            --success: #42ce9f;
+            --warning: #ffce54;
+            --border: #e3e9f0;
+            --text: #2d3e50;
+            --text-light: #99a8b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #3b5a84 100%);
+            color: white;
+            padding: 1.2rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+            margin-right: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .logo span {
+            font-weight: 300;
+            opacity: 0.8;
+            font-size: 0.9rem;
+            margin-left: 5px;
+        }
+
+        .nav-links {
+            display: flex;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-links a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        main {
+            margin: 2rem 0;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 25px;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-header {
+            padding: 0 10px 15px 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .sidebar-header p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--text);
+        }
+
+        .menu-item:hover {
+            background-color: rgba(93, 156, 236, 0.08);
+            transform: translateX(3px);
+        }
+
+        .menu-item.active {
+            background-color: rgba(93, 156, 236, 0.12);
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .menu-item i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .content-area {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+            font-size: 1.4rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 12px;
+            color: var(--secondary);
+            background: rgba(93, 156, 236, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+
+        .section-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-top: -15px;
+            margin-bottom: 25px;
+        }
+
+        .upload-container {
+            border: 2px dashed var(--border);
+            padding: 40px;
+            text-align: center;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+            background-color: rgba(245, 248, 250, 0.5);
+        }
+
+        .upload-container:hover {
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(93, 156, 236, 0.1);
+        }
+
+        .upload-container i {
+            font-size: 3rem;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            background: rgba(93, 156, 236, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .upload-container h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .upload-container p {
+            margin: 10px 0;
+            color: var(--text-light);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(to right, var(--secondary), #7baef5);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(93, 156, 236, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(93, 156, 236, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn.btn-success {
+            background: linear-gradient(to right, var(--success), #5cddb9);
+            box-shadow: 0 4px 8px rgba(66, 206, 159, 0.2);
+        }
+
+        .btn.btn-success:hover {
+            box-shadow: 0 6px 12px rgba(66, 206, 159, 0.3);
+        }
+
+        .btn.btn-outline {
+            background: transparent;
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+            box-shadow: none;
+        }
+
+        .btn.btn-outline:hover {
+            background: rgba(93, 156, 236, 0.05);
+        }
+
+        .options-container {
+            background-color: var(--light);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+        }
+
+        .options-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .options-header h3 {
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .badge {
+            background: rgba(93, 156, 236, 0.12);
+            color: var(--secondary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .option-group {
+            margin-bottom: 20px;
+        }
+
+        .option-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .checkbox-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .checkbox-item input {
+            margin-right: 8px;
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .preview-table th, .preview-table td {
+            border: 1px solid var(--border);
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        .preview-table th {
+            background-color: rgba(93, 156, 236, 0.05);
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .table-container {
+            border-radius: 8px;
+            overflow: auto;
+            max-height: 400px;
+            border: 1px solid var(--border);
+        }
+
+        .action-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+        }
+
+        .anonymized {
+            background-color: rgba(66, 206, 159, 0.06) !important;
+            position: relative;
+        }
+
+        .anonymized::after {
+            content: "PII";
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            font-size: 7px;
+            background-color: var(--success);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 0;
+            border-radius: 12px;
+            width: 500px;
+            max-width: 95%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            color: white;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .close-modal {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: white;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            background: var(--light);
+            border-top: 1px solid var(--border);
+        }
+
+        .success-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(66, 206, 159, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+        }
+
+        .success-icon i {
+            font-size: 2rem;
+            color: var(--success);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .result-value {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .results-container {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>Obscura<span>Privacy</span></h1>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="active">Dashboard</a>
+                <a href="#">Documentation</a>
+                <a href="#">Support</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="dashboard">
+                <div class="sidebar">
+                    <div class="sidebar-header">
+                        <h3>Data Privacy</h3>
+                        <p>Protect sensitive information</p>
+                    </div>
+                    <div class="menu-item active" data-section="data-processing">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Anonymize Data</span>
+                    </div>
+                    <div class="menu-item" data-section="history">
+                        <i class="fas fa-history"></i>
+                        <span>Processing History</span>
+                    </div>
+                    <div class="menu-item" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </div>
+                </div>
+                
+                <div class="content-area">
+                    <!-- Data Processing Section -->
+                    <div id="data-processing-section">
+                        <h2 class="section-title"><i class="fas fa-shield-alt"></i> Data Anonymization</h2>
+                        <span class="section-subtitle">Upload and anonymize your sensitive data to comply with privacy regulations</span>
+                        
+                        <div class="upload-container" id="drop-area">
+                            <i class="fas fa-file-upload"></i>
+                            <h3>Upload Dataset</h3>
+                            <p>Drag & drop your CSV or Excel file here, or click to browse</p>
+                            <input type="file" id="file-input" accept=".csv, .xlsx, .xls" style="display: none;">
+                            <button class="btn" id="browse-btn"><i class="fas fa-folder-open"></i> Browse Files</button>
+                        </div>
+                        
+                        <div id="file-details" style="display: none;">
+                            <div class="options-header">
+                                <h3>File Details</h3>
+                                <div class="badge">Ready for processing</div>
+                            </div>
+                            <div class="results-container">
+                                <div class="result-item">
+                                    <div class="result-label">File Name:</div>
+                                    <div class="result-value" id="file-name"></div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">File Size:</div>
+                                    <div class="result-value" id="file-size"></div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">File Type:</div>
+                                    <div class="result-value" id="file-type"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="data-options" class="options-container" style="display: none;">
+                            <div class="options-header">
+                                <h3>Anonymization Options</h3>
+                                <div class="badge"><i class="fas fa-robot"></i> Auto-detected</div>
+                            </div>
+                            
+                            <div class="option-group">
+                                <label>Detected Personal Identifiers:</label>
+                                <div class="checkbox-container" id="pii-fields">
+                                    <!-- Dynamically populated -->
+                                </div>
+                            </div>
+                            
+                            <div class="option-group">
+                                <label>Anonymization Techniques:</label>
+                                <div class="checkbox-container">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="technique-masking" checked>
+                                        <label for="technique-masking">Masking</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="technique-hashing" checked>
+                                        <label for="technique-hashing">Hashing</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="technique-generalization" checked>
+                                        <label for="technique-generalization">Generalization</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="data-preview" style="display: none;">
+                            <h3>Data Preview</h3>
+                            <p>The table below shows a preview of your data with identified PII fields highlighted.</p>
+                            
+                            <div class="table-container">
+                                <table class="preview-table" id="preview-table">
+                                    <!-- Dynamically populated -->
+                                </table>
+                            </div>
+                            
+                            <div class="action-row">
+                                <button class="btn btn-outline" id="cancel-btn"><i class="fas fa-times"></i> Cancel</button>
+                                <button class="btn btn-success" id="process-btn"><i class="fas fa-shield-alt"></i> Process & Anonymize</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- History Section (Initially Hidden) -->
+                    <div id="history-section" style="display: none;">
+                        <h2 class="section-title"><i class="fas fa-history"></i> Processing History</h2>
+                        <span class="section-subtitle">Track your anonymized datasets</span>
+                        
+                        <div class="table-container">
+                            <table class="preview-table">
+                                <thead>
+                                    <tr>
+                                        <th>File Name</th>
+                                        <th>Date</th>
+                                        <th>Fields Anonymized</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Sample entries -->
+                                    <tr>
+                                        <td>employee_data_2025.csv</td>
+                                        <td>Mar 14, 2025</td>
+                                        <td>Name, Email, SSN, Phone, Address</td>
+                                        <td>
+                                            <button class="btn" style="padding: 5px 10px; font-size: 0.9rem;">Download</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>customer_records.xlsx</td>
+                                        <td>Mar 12, 2025</td>
+                                        <td>Name, Phone, Credit Card, Address</td>
+                                        <td>
+                                            <button class="btn" style="padding: 5px 10px; font-size: 0.9rem;">Download</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Settings Section (Initially Hidden) -->
+                    <div id="settings-section" style="display: none;">
+                        <h2 class="section-title"><i class="fas fa-cog"></i> Settings</h2>
+                        <span class="section-subtitle">Configure your privacy protection options</span>
+                        
+                        <div class="options-container">
+                            <div class="option-group">
+                                <label for="max-file-size">Maximum File Size (MB)</label>
+                                <input type="number" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd; width: 120px;" id="max-file-size" value="20">
+                            </div>
+                            
+                            <div class="option-group">
+                                <label>Default Anonymization Techniques:</label>
+                                <div class="checkbox-container">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="default-masking" checked>
+                                        <label for="default-masking">Masking</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="default-hashing" checked>
+                                        <label for="default-hashing">Hashing</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" id="default-generalization" checked>
+                                        <label for="default-generalization">Generalization</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="action-row">
+                                <div></div>
+                                <button class="btn btn-success" id="save-settings-btn"><i class="fas fa-save"></i> Save Settings</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Process Complete Modal -->
+    <div class="modal" id="process-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Processing Complete</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="success-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h4 style="text-align: center; margin-bottom: 15px;">Your data is now protected!</h4>
+                <p style="text-align: center; color: var(--text-light); margin-bottom: 20px;">The anonymization process has been successfully completed.</p>
+                
+                <div class="results-container">
+                    <div class="result-item">
+                        <div class="result-label">Processed File:</div>
+                        <div class="result-value" id="result-filename"></div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Fields Anonymized:</div>
+                        <div class="result-value" id="fields-count"></div>
+                    </div>
+                </div>
+                
+                <div id="processed-fields-container" style="margin-top: 15px;">
+                    <label style="font-weight: 600;">Anonymized Fields:</label>
+                    <div class="checkbox-container" id="processed-fields" style="margin-top: 10px;">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="process-new-btn">Process Another File</button>
+                <button class="btn btn-success" id="download-btn"><i class="fas fa-download"></i> Download</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // DOM Elements
+        const menuItems = document.querySelectorAll('.menu-item');
+        const sections = ['data-processing', 'history', 'settings'];
+        
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('file-input');
+        const browseBtn = document.getElementById('browse-btn');
+        const fileDetails = document.getElementById('file-details');
+        const fileName = document.getElementById('file-name');
+        const fileSize = document.getElementById('file-size');
+        const fileType = document.getElementById('file-type');
+        const dataOptions = document.getElementById('data-options');
+        const piiFields = document.getElementById('pii-fields');
+        const dataPreview = document.getElementById('data-preview');
+        const previewTable = document.getElementById('preview-table');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const processBtn = document.getElementById('process-btn');
+        
+        const processModal = document.getElementById('process-modal');
+        const closeModal = document.querySelector('.close-modal');
+        const resultFilename = document.getElementById('result-filename');
+        const fieldsCount = document.getElementById('fields-count');
+        const processedFields = document.getElementById('processed-fields');
+        const downloadBtn = document.getElementById('download-btn');
+        const processNewBtn = document.getElementById('process-new-btn');
+        const saveSettingsBtn = document.getElementById('save-settings-btn');
+
+        // Current data state
+        let currentFile = null;
+        let parsedData = null;
+        let detectedPII = [];
+        let selectedPII = [];
+        let anonymizedData = null;
+
+        // Navigation Logic
+        menuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // Update active state
+                menuItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show corresponding section
+                const sectionName = this.getAttribute('data-section');
+                sections.forEach(s => {
+                    const section = document.getElementById(`${s}-section`);
+                    if (section) {
+                        section.style.display = s === sectionName ? 'block' : 'none';
+                    }
+                });
+                
+                console.log(`Navigated to ${sectionName} section`);
+            });
+        });
+
+        // File Upload Logic
+        browseBtn.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                handleFile(this.files[0]);
+            }
+        });
+        
+        dropArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#5d9cec';
+            this.style.transform = 'scale(1.01)';
+        });
+        
+        dropArea.addEventListener('dragleave', function() {
+            this.style.borderColor = '#e3e9f0';
+            this.style.transform = 'scale(1)';
+        });
+        
+        dropArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#e3e9f0';
+            this.style.transform = 'scale(1)';
+            
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            currentFile = file;
+            
+            // Display file details
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileType.textContent = file.type || 'text/csv';
+            fileDetails.style.display = 'block';
+            
+            console.log(`File uploaded: ${file.name} (${formatFileSize(file.size)})`);
+            
+            // Parse and analyze the file
+            parseFile(file);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' bytes';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+            else return (bytes / 1048576).toFixed(2) + ' MB';
+        }
+
+        function parseFile(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const fileContent = e.target.result;
+                
+                // For CSV files
+                if (file.name.endsWith('.csv')) {
+                    parsedData = parseCSV(fileContent);
+                } 
+                // For Excel files (simplified - in a real app would use a library like SheetJS)
+                else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                    // Simplified Excel parsing for demo
+                    parsedData = mockExcelParse(fileContent);
+                }
+                
+                // Detect PII fields
+                detectPII();
+                
+                // Show data options
+                showDataOptions();
+                
+                // Generate data preview
+                generatePreview();
+            };
+            
+            reader.readAsText(file);
+        }
+
+        function parseCSV(content) {
+            // Simple CSV parser - in a real app, use a library like PapaParse
+            const lines = content.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim() === '') continue;
+                
+                const values = lines[i].split(',').map(v => v.trim());
+                const row = {};
+                
+                headers.forEach((header, index) => {
+                    row[header] = values[index] || '';
+                });
+                
+                data.push(row);
+            }
+            
+            return { headers, data };
+        }
+
+        function mockExcelParse(content) {
+            // This is a mock function for demo purposes
+            // In a real app, you'd use a library like SheetJS to parse Excel files
+            return {
+                headers: ['Name', 'Email', 'Phone', 'SSN', 'Address', 'Department', 'Salary'],
+                data: [
+                    { 'Name': 'John Doe', 'Email': 'john.doe@example.com', 'Phone': '555-123-4567', 'SSN': '123-45-6789', 'Address': '123 Main St, City', 'Department': 'Engineering', 'Salary': '85000' },
+                    { 'Name': 'Jane Smith', 'Email': 'jane.smith@example.com', 'Phone': '555-987-6543', 'SSN': '987-65-4321', 'Address': '456 Elm St, Town', 'Department': 'Marketing', 'Salary': '78000' },
+                    { 'Name': 'Bob Johnson', 'Email': 'bob.johnson@example.com', 'Phone': '555-456-7890', 'SSN': '456-78-9012', 'Address': '789 Oak St, Village', 'Department': 'Finance', 'Salary': '92000' }
+                ]
+            };
+        }
+
+        function detectPII() {
+            // This is a simplified PII detection - in a real app, use more sophisticated patterns
+            const piiPatterns = {
+                'Name': /^[A-Z][a-z]+ [A-Z][a-z]+$/,
+                'Email': /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                'Phone': /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/,
+                'SSN': /^\d{3}-\d{2}-\d{4}$/,
+                'Credit Card': /^\d{4}[- ]?\d{4}[- ]?\d{4}[- ]?\d{4}$/,
+                'Address': /^.*(St|Ave|Rd|Blvd|Ln|Dr|Terrace|Place|Court).*$/,
+                'Zip Code': /^\d{5}(-\d{4})?$/
+            };
+            
+            detectedPII = [];
+            
+            // Check each header against common PII field names
+            parsedData.headers.forEach(header => {
+                // Check header name against common PII field names
+                const commonPIIFields = [
+                    'name', 'first name', 'last name', 'email', 'phone', 'address', 'ssn', 
+                    'social security', 'credit card', 'cc number', 'dob', 'birth', 'salary', 'income'
+                ];
+                
+                if (commonPIIFields.some(field => header.toLowerCase().includes(field))) {
+                    detectedPII.push(header);
+                    return;
+                }
+                
+                // Check data pattern for common PII formats
+                const firstFewValues = parsedData.data.slice(0, 5).map(row => row[header]);
+                
+                for (const [piiType, pattern] of Object.entries(piiPatterns)) {
+                    if (firstFewValues.some(value => pattern.test(value))) {
+                        detectedPII.push(header);
+                        return;
+                    }
+                }
+            });
+            
+            // Initialize selected PII with detected PII
+            selectedPII = [...detectedPII];
+        }
+
+        function showDataOptions() {
+            // Populate the PII fields with detected fields
+            piiFields.innerHTML = '';
+            
+            parsedData.headers.forEach(header => {
+                const isDetected = detectedPII.includes(header);
+                
+                const checkboxItem = document.createElement('div');
+                checkboxItem.className = 'checkbox-item';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `field-${header}`;
+                checkbox.checked = isDetected;
+                
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        selectedPII.push(header);
+                    } else {
+                        selectedPII = selectedPII.filter(h => h !== header);
+                    }
+                    
+                    // Update the preview
+                    generatePreview();
+                });
+                
+                const label = document.createElement('label');
+                label.setAttribute('for', `field-${header}`);
+                label.textContent = header;
+                
+                checkboxItem.appendChild(checkbox);
+                checkboxItem.appendChild(label);
+                piiFields.appendChild(checkboxItem);
+            });
+            
+            // Show the options container
+            dataOptions.style.display = 'block';
+        }
+
+        function generatePreview() {
+            // Generate table header
+            let headerHTML = '<tr>';
+            parsedData.headers.forEach(header => {
+                const isPII = selectedPII.includes(header);
+                headerHTML += `<th class="${isPII ? 'anonymized' : ''}">${header}</th>`;
+            });
+            headerHTML += '</tr>';
+            
+            // Generate table rows (first 5 rows)
+            let rowsHTML = '';
+            for (let i = 0; i < Math.min(5, parsedData.data.length); i++) {
+                rowsHTML += '<tr>';
+                parsedData.headers.forEach(header => {
+                    const isPII = selectedPII.includes(header);
+                    rowsHTML += `<td class="${isPII ? 'anonymized' : ''}">${parsedData.data[i][header]}</td>`;
+                });
+                rowsHTML += '</tr>';
+            }
+            
+            // Update the preview table
+            previewTable.innerHTML = headerHTML + rowsHTML;
+            
+            // Show the preview
+            dataPreview.style.display = 'block';
+        }
+
+        // Data Processing
+        cancelBtn.addEventListener('click', function() {
+            // Reset the file upload state
+            resetFileUpload();
+        });
+
+        processBtn.addEventListener('click', function() {
+            // Process the data
+            anonymizeData();
+            
+            console.log(`Data processing: Anonymized ${selectedPII.length} PII fields`);
+            
+            // Show the completion modal
+            showProcessModal();
+        });
+
+        function anonymizeData() {
+            // Clone the data
+            anonymizedData = {
+                headers: [...parsedData.headers],
+                data: JSON.parse(JSON.stringify(parsedData.data))
+            };
+            
+            // Get selected techniques
+            const useMasking = document.getElementById('technique-masking').checked;
+            const useHashing = document.getElementById('technique-hashing').checked;
+            const useGeneralization = document.getElementById('technique-generalization').checked;
+            
+            // Anonymize the selected fields
+            selectedPII.forEach(field => {
+                anonymizedData.data.forEach(row => {
+                    const originalValue = row[field];
+                    
+                    // Choose an appropriate technique based on the field type
+                    if (field.toLowerCase().includes('name') && useMasking) {
+                        // Masking for names
+                        row[field] = maskName(originalValue);
+                    } 
+                    else if ((field.toLowerCase().includes('email') || field.toLowerCase().includes('id')) && useHashing) {
+                        // Hashing for emails and IDs
+                        row[field] = hashValue(originalValue);
+                    } 
+                    else if ((field.toLowerCase().includes('address') || field.toLowerCase().includes('zip')) && useGeneralization) {
+                        // Generalization for addresses
+                        row[field] = generalizeAddress(originalValue);
+                    } 
+                    else if (field.toLowerCase().includes('phone') && useMasking) {
+                        // Masking for phone numbers
+                        row[field] = maskPhone(originalValue);
+                    } 
+                    else if ((field.toLowerCase().includes('ssn') || field.toLowerCase().includes('social')) && useMasking) {
+                        // Masking for SSN
+                        row[field] = maskSSN(originalValue);
+                    } 
+                    else if ((field.toLowerCase().includes('credit') || field.toLowerCase().includes('card')) && useMasking) {
+                        // Masking for credit cards
+                        row[field] = maskCreditCard(originalValue);
+                    } 
+                    else if ((field.toLowerCase().includes('salary') || field.toLowerCase().includes('income')) && useGeneralization) {
+                        // Generalization for salary/income
+                        row[field] = generalizeSalary(originalValue);
+                    } 
+                    else {
+                        // Default: simple masking
+                        row[field] = maskValue(originalValue);
+                    }
+                });
+            });
+        }
+
+        // Anonymization techniques
+        function maskName(name) {
+            if (!name) return '';
+            const parts = name.split(' ');
+            return parts.map(part => part[0] + '*'.repeat(part.length - 1)).join(' ');
+        }
+
+        function hashValue(value) {
+            // Simple hash function (in a real app, use a crypto library)
+            let hash = 0;
+            for (let i = 0; i < value.length; i++) {
+                hash = ((hash << 5) - hash) + value.charCodeAt(i);
+                hash |= 0;
+            }
+            return 'HASH_' + Math.abs(hash).toString(16);
+        }
+
+        function generalizeAddress(address) {
+            if (!address) return '';
+            // Simplify to just the city/state if possible
+            const parts = address.split(',');
+            if (parts.length > 1) {
+                return parts.slice(1).join(',').trim();
+            }
+            // Otherwise just return "REDACTED ADDRESS"
+            return 'REDACTED ADDRESS';
+        }
+
+        function maskPhone(phone) {
+            if (!phone) return '';
+            // Keep only the last 4 digits
+            return phone.replace(/\d(?=\d{4})/g, '*');
+        }
+
+        function maskSSN(ssn) {
+            if (!ssn) return '';
+            // Format: XXX-XX-1234 (only last 4 visible)
+            return 'XXX-XX-' + ssn.slice(-4);
+        }
+
+        function maskCreditCard(cc) {
+            if (!cc) return '';
+            // Format: XXXX-XXXX-XXXX-1234 (only last 4 visible)
+            return 'XXXX-XXXX-XXXX-' + cc.replace(/[^\d]/g, '').slice(-4);
+        }
+
+        function generalizeSalary(salary) {
+            if (!salary) return '';
+            // Round to nearest 10,000
+            const salaryNum = parseInt(salary.replace(/[^\d]/g, ''));
+            return 'Range: ' + (Math.floor(salaryNum / 10000) * 10000) + ' - ' + (Math.ceil(salaryNum / 10000) * 10000);
+        }
+
+        function maskValue(value) {
+            if (!value) return '';
+            if (typeof value !== 'string') value = String(value);
+            return '*'.repeat(value.length);
+        }
+
+        function showProcessModal() {
+            // Update result filename
+            resultFilename.textContent = currentFile.name;
+            fieldsCount.textContent = selectedPII.length + ' fields';
+            
+            // Populate processed fields
+            processedFields.innerHTML = '';
+            selectedPII.forEach(field => {
+                const item = document.createElement('div');
+                item.className = 'checkbox-item';
+                
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-check-circle';
+                icon.style.color = '#42ce9f';
+                icon.style.marginRight = '8px';
+                
+                const label = document.createElement('span');
+                label.textContent = field;
+                
+                item.appendChild(icon);
+                item.appendChild(label);
+                processedFields.appendChild(item);
+            });
+            
+            // Show the modal
+            processModal.style.display = 'flex';
+        }
+
+        // Modal handling
+        closeModal.addEventListener('click', function() {
+            processModal.style.display = 'none';
+        });
+
+        downloadBtn.addEventListener('click', function() {
+            if (anonymizedData) {
+                // Convert to CSV
+                const csv = convertToCSV(anonymizedData);
+                
+                // Create download link
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'anonymized_' + currentFile.name;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                console.log(`Downloaded anonymized dataset (${formatFileSize(blob.size)})`);
+                
+                // Hide the modal
+                processModal.style.display = 'none';
+                
+                // Reset the file upload
+                resetFileUpload();
+            }
+        });
+        
+        processNewBtn.addEventListener('click', function() {
+            // Hide the modal
+            processModal.style.display = 'none';
+            
+            // Reset the file upload to process a new file
+            resetFileUpload();
+        });
+
+        function convertToCSV(data) {
+            // Convert headers to CSV line
+            const headerLine = data.headers.join(',');
+            
+            // Convert each data row to CSV line
+            const dataLines = data.data.map(row => {
+                return data.headers.map(header => {
+                    const value = row[header] || '';
+                    // Escape any commas in the values
+                    return value.includes(',') ? `"${value}"` : value;
+                }).join(',');
+            });
+            
+            // Combine header and data lines
+            return headerLine + '\n' + dataLines.join('\n');
+        }
+
+        function resetFileUpload() {
+            // Reset the file input
+            fileInput.value = '';
+            
+            // Hide the file details, options, and preview
+            fileDetails.style.display = 'none';
+            dataOptions.style.display = 'none';
+            dataPreview.style.display = 'none';
+            
+            // Reset the current file and parsed data
+            currentFile = null;
+            parsedData = null;
+            detectedPII = [];
+            selectedPII = [];
+            anonymizedData = null;
+        }
+        
+        // Settings
+        saveSettingsBtn.addEventListener('click', function() {
+            alert('Settings saved successfully!');
+        });
+    </script>
+</body>
+</html>
