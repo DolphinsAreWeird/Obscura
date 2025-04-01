@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obscura - Secure Private Investigation Platform Architecture</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+        
+        #container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03), 0 6px 12px rgba(0, 0, 0, 0.02);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .title h1 {
+            margin: 0;
+            font-size: 32px;
+            color: #0f172a;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        .title h2 {
+            margin: 4px 0 0 0;
+            font-size: 16px;
+            color: #64748b;
+            font-weight: 400;
+        }
+        
+        .legend {
+            position: absolute;
+            left: 50%;
+            bottom: 20px;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 30px;
+            background-color: rgba(255, 255, 255, 0.98);
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            z-index: 100;
+            backdrop-filter: blur(8px);
+            width: auto;
+            max-width: 90%;
+        }
+        
+        .legend-section {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            padding: 0;
+            border-radius: 0;
+            background-color: transparent;
+            border: none;
+        }
+        
+        .legend-title {
+            font-weight: 600;
+            font-size: 11px;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 0;
+            border: none;
+            padding: 0;
+            white-space: nowrap;
+        }
+        
+        .legend-items-container {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+        
+        .legend-item, .legend-connection {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            color: #334155;
+            margin: 0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background-color: rgba(248, 250, 252, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .legend-item:hover, .legend-connection:hover {
+            background-color: rgba(255, 255, 255, 0.95);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .legend-line {
+            width: 20px;
+            height: 2px;
+            border-radius: 2px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-bg {
+            fill: rgba(255, 255, 255, 0.95);
+            stroke: #e2e8f0;
+            stroke-width: 1.5;
+            rx: 12;
+            ry: 12;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
+        }
+        
+        .section-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-anchor: middle;
+            fill: #1e293b;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+        
+        .node-label {
+            font-size: 10px;
+            text-anchor: middle;
+            fill: #1e293b;
+            font-weight: 500;
+            pointer-events: none;
+            letter-spacing: 0.01em;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+        
+        .node-icon {
+            font-size: 16px;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+        
+        .link {
+            stroke-width: 2;
+            fill: none;
+            opacity: 0.85;
+        }
+        
+        .link:hover {
+            opacity: 1;
+            stroke-width: 2.5;
+        }
+        
+        .link-auth {
+            stroke: #3b82f6;
+        }
+        
+        .link-data {
+            stroke: #ef4444;
+        }
+        
+        .link-security {
+            stroke: #10b981;
+        }
+        
+        .link-management {
+            stroke: #6366f1;
+        }
+        
+        .link-verify {
+            stroke: #4ade80;
+        }
+        
+        .link-comm {
+            stroke: #fbbf24;
+        }
+        
+        .link-analyze {
+            stroke: #a78bfa;
+        }
+        
+        .link-monitor {
+            stroke: #34d399;
+        }
+        
+        .link-arrow {
+            fill: #6b7280;
+        }
+        
+        .tooltip {
+            position: absolute;
+            padding: 16px;
+            background-color: rgba(255, 255, 255, 0.98);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+            max-width: 280px;
+            font-size: 12px;
+            border: 1px solid #e2e8f0;
+            z-index: 10;
+            transform: translateY(10px);
+            backdrop-filter: blur(8px);
+        }
+        
+        .tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .tooltip h3 {
+            margin: 0 0 10px 0;
+            font-size: 15px;
+            color: #0f172a;
+            font-weight: 600;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tooltip p {
+            margin: 6px 0;
+            line-height: 1.6;
+            color: #334155;
+            font-size: 12px;
+        }
+        
+        .tooltip ul {
+            margin: 8px 0 0 0;
+            padding-left: 18px;
+            color: #475569;
+        }
+        
+        .tooltip li {
+            margin: 4px 0;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        
+        .tooltip-subtitle {
+            font-weight: 600;
+            margin: 10px 0 6px 0;
+            color: #1e293b;
+            font-size: 12px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-highlight {
+            position: absolute;
+            pointer-events: none;
+            border-radius: 16px;
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+        
+        .section-highlight.active {
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div class="title">
+            <h1>Obscura</h1>
+            <h2>Secure Private Investigation & Intelligence Sharing Platform</h2>
+        </div>
+        
+        <div id="chart"></div>
+        <div id="tooltip" class="tooltip"></div>
+        
+        <div id="legends" class="legend">
+            <div class="legend-section">
+                <div class="legend-title">Components:</div>
+                <div class="legend-items-container">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #93c5fd, #3b82f6);"></div>
+                        <span>Client-Side</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #fca5a5, #ef4444);"></div>
+                        <span>Backend</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #10b981; opacity: 0.5;"></div>
+                        <span>Security</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #6366f1; opacity: 0.5;"></div>
+                        <span>Management</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="legend-section">
+                <div class="legend-title">Flows:</div>
+                <div class="legend-items-container">
+                    <div class="legend-connection">
+                        <div class="legend-line" style="background-color: #3b82f6;"></div>
+                        <span>Auth</span>
+                    </div>
+                    <div class="legend-connection">
+                        <div class="legend-line" style="background-color: #ef4444;"></div>
+                        <span>Data</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set up dimensions
+        const width = 1200;
+        const height = 700;
+        const margin = { top: 40, right: 40, bottom: 40, left: 40 };
+        
+        // Define architecture components with detailed descriptions
+        const nodes = [
+            // Client Side (Frontend)
+            { id: "auth", name: "User Authentication", group: "frontend", icon: "🔐", 
+              description: "Email/Password login with MFA for added security.",
+              details: [
+                "Google Authenticator MFA",
+                "Role-Based Access",
+                "Secure Session Management",
+                "Admin MFA Requirements"
+              ]
+            },
+              
+            { id: "upload", name: "File Interface", group: "frontend", icon: "📤", 
+              description: "Upload/Download interface for PII-containing files.",
+              details: [
+                "CSV/Excel Support",
+                "PII File Upload",
+                "Anonymized Download",
+                "Time-Limited Links"
+              ]
+            },
+            
+            // Backend
+            { id: "detection", name: "PII Detection", group: "backend", icon: "🔍", 
+              description: "Scans files for PII patterns and sensitive data.",
+              details: [
+                "Email Detection",
+                "Phone Number Detection",
+                "Pattern Recognition",
+                "Custom PII Rules"
+              ]
+            },
+              
+            { id: "anonymize", name: "Data Anonymization", group: "backend", icon: "⬛", 
+              description: "Anonymizes detected PII using masking and generalization.",
+              details: [
+                "Data Masking",
+                "Value Generalization",
+                "Age Range Conversion",
+                "Consistent Anonymization"
+              ]
+            },
+              
+            { id: "storage", name: "Encrypted Storage", group: "backend", icon: "🔒", 
+              description: "Temporary AES-256 encrypted storage for processing.",
+              details: [
+                "AES-256 Encryption",
+                "Temporary Storage",
+                "Auto Cleanup",
+                "24h Expiration"
+              ]
+            },
+              
+            { id: "download", name: "Secure Download", group: "backend", icon: "📥", 
+              description: "Secure file download with time-limited access.",
+              details: [
+                "24h Valid Links",
+                "Uploader-Only Access",
+                "One-Time Downloads",
+                "Access Control"
+              ]
+            },
+            
+            // Security Features
+            { id: "encryption", name: "Encryption", group: "security", icon: "🔐", 
+              description: "SSL/TLS and AES-256 encryption for data protection.",
+              details: [
+                "SSL/TLS Transport",
+                "AES-256 Storage",
+                "End-to-End Security",
+                "Key Management"
+              ]
+            },
+              
+            { id: "access", name: "Access Control", group: "security", icon: "🛡️", 
+              description: "Role-based access control and MFA security.",
+              details: [
+                "Role-Based Access",
+                "MFA Requirements",
+                "Admin Security",
+                "Access Policies"
+              ]
+            },
+              
+            { id: "audit", name: "Audit Logging", group: "security", icon: "📝", 
+              description: "Secure logging of user actions and system events.",
+              details: [
+                "Action Logging",
+                "Secure Storage",
+                "System Monitoring",
+                "Access Tracking"
+              ]
+            },
+            
+            // File Management
+            { id: "expiry", name: "File Expiry", group: "management", icon: "⏰", 
+              description: "Automatic file deletion and expiration management.",
+              details: [
+                "24h Expiration",
+                "Auto Cleanup",
+                "Download Tracking",
+                "Storage Management"
+              ]
+            },
+              
+            { id: "integrity", name: "Integrity Check", group: "management", icon: "✓", 
+              description: "SHA-256 hash verification for file integrity.",
+              details: [
+                "SHA-256 Hashing",
+                "Tamper Detection",
+                "File Verification",
+                "Process Validation"
+              ]
+            }
+        ];
+        
+        // Define connections between components
+        const links = [
+            // Frontend to Backend
+            { source: "auth", target: "upload", type: "auth" },
+            { source: "upload", target: "detection", type: "data" },
+            { source: "detection", target: "anonymize", type: "data" },
+            { source: "anonymize", target: "storage", type: "data" },
+            { source: "storage", target: "download", type: "data" },
+            { source: "download", target: "upload", type: "data" },
+            
+            // Security connections
+            { source: "encryption", target: "upload", type: "security" },
+            { source: "encryption", target: "storage", type: "security" },
+            { source: "encryption", target: "download", type: "security" },
+            { source: "access", target: "upload", type: "security" },
+            { source: "access", target: "download", type: "security" },
+            { source: "audit", target: "upload", type: "security" },
+            { source: "audit", target: "download", type: "security" },
+            
+            // File Management connections
+            { source: "expiry", target: "storage", type: "management" },
+            { source: "expiry", target: "download", type: "management" },
+            { source: "integrity", target: "storage", type: "management" },
+            { source: "integrity", target: "download", type: "management" }
+        ];
+        
+        // Create SVG container
+        const svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("viewBox", [0, 0, width, height])
+            .attr("style", "max-width: 100%; height: auto;");
+            
+        // Create main group for all elements
+        const mainGroup = svg.append("g");
+            
+        // Create defs for gradients, patterns, etc.
+        const defs = mainGroup.append("defs");
+        
+        // Define color scale with softer colors
+        const colorScale = d3.scaleOrdinal()
+            .domain(["frontend", "backend", "security", "management"])
+            .range(["#3b82f6", "#ef4444", "#10b981", "#6366f1"]);
+        
+        // Add arrow markers for connection types with simpler, clearer design
+        defs.selectAll("marker")
+            .data(["auth", "data", "security", "management"])
+            .enter().append("marker")
+            .attr("id", d => `arrow-${d}`)
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", 30)
+            .attr("refY", 0)
+            .attr("markerWidth", 10)
+            .attr("markerHeight", 10)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("class", "link-arrow")
+            .attr("d", "M0,-5L10,0L0,5")
+            .attr("fill", d => {
+                switch(d) {
+                    case "auth": return "#3b82f6";
+                    case "data": return "#ef4444";
+                    case "security": return "#10b981";
+                    case "management": return "#6366f1";
+                }
+            });
+            
+        // Add a subtle background gradient to the SVG
+        const bgGradient = defs.append("linearGradient")
+            .attr("id", "bg-gradient")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "100%")
+            .attr("y2", "100%");
+            
+        bgGradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "#ffffff");
+            
+        bgGradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "#ffffff");
+            
+        mainGroup.append("rect")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("fill", "#ffffff")
+            .attr("rx", 8)
+            .attr("ry", 8);
+            
+        // Define grid layout with improved organization
+        const grid = {
+            frontend: { 
+                x: margin.left + 40, 
+                y: margin.top + 50, 
+                width: 280, 
+                height: 180, // Increased height for more internal bottom padding
+                title: "Client-Side",
+                columns: 2,
+                rows: 1
+            },
+            backend: { 
+                x: margin.left + 380, 
+                y: margin.top + 50, 
+                width: 400, 
+                height: 320, 
+                title: "Backend",
+                columns: 2,
+                rows: 3
+            },
+            security: { 
+                x: margin.left + 840, 
+                y: margin.top + 50, 
+                width: 280, 
+                height: 380,  
+                title: "Security Features",
+                columns: 1,
+                rows: 3
+            },
+            management: { 
+                x: margin.left + 380, 
+                y: margin.top + 430, 
+                width: 400, 
+                height: 180, // Increased height for more internal bottom padding
+                title: "File Management",
+                columns: 2,
+                rows: 1
+            }
+        };
+            
+        // Draw section backgrounds with more elegant styling
+        mainGroup.selectAll(".section-bg")
+            .data(Object.values(grid))
+            .enter()
+            .append("rect")
+            .attr("class", "section-bg")
+            .attr("x", d => d.x)
+            .attr("y", d => d.y)
+            .attr("width", d => d.width)
+            .attr("height", d => d.height)
+            .attr("rx", 12)
+            .attr("ry", 12);
+        
+        // Add section titles with more elegant styling
+        mainGroup.selectAll(".section-title")
+            .data(Object.values(grid))
+            .enter()
+            .append("text")
+            .attr("class", "section-label")
+            .attr("x", d => d.x + d.width/2)
+            .attr("y", d => d.y + 25)
+            .text(d => d.title);
+        
+        // Position nodes in a grid layout within each section
+        nodes.forEach(node => {
+            const section = grid[node.group];
+            const sectionNodes = nodes.filter(n => n.group === node.group);
+            const nodeIndex = sectionNodes.indexOf(node);
+            
+            // Calculate grid position
+            const row = Math.floor(nodeIndex / section.columns);
+            const col = nodeIndex % section.columns;
+            
+            // Calculate actual x,y coordinates with adjusted spacing for security section
+            const cellWidth = section.width / section.columns;
+            const cellHeight = section.height / section.rows;
+            const padding = 20;
+            
+            node.x = section.x + (col + 0.5) * cellWidth;
+            
+            // Adjust vertical spacing specifically for security section
+            if (node.group === 'security') {
+                node.y = section.y + (row * (cellHeight - 20)) + 60; // Reduced spacing between security nodes
+            } else {
+                node.y = section.y + (row + 0.5) * cellHeight + 30;
+            }
+        });
+        
+        // Filter to keep only main flow connections
+        const mainFlowLinks = links.filter(link => 
+            link.type === 'auth' || link.type === 'data'
+        );
+
+        // Create subtle background zones using direct attributes
+        mainGroup.insert("rect", ":first-child") // Insert behind other elements
+            .attr("fill", "#10b981") // Security color
+            .attr("opacity", 0.05)
+            .attr("x", margin.left + 30)
+            .attr("y", margin.top + 30)
+            .attr("width", width - margin.left - margin.right - 60)
+            .attr("height", height - margin.top - margin.bottom - 60)
+            .attr("rx", 12)
+            .attr("ry", 12);
+
+        mainGroup.insert("rect", ":first-child") // Insert behind other elements
+            .attr("fill", "#6366f1") // Management color
+            .attr("opacity", 0.05)
+            .attr("x", margin.left + 350)
+            .attr("y", margin.top + 30)
+            .attr("width", 420)
+            .attr("height", height - margin.top - margin.bottom - 60)
+            .attr("rx", 12)
+            .attr("ry", 12);
+
+        // Update link routing with smooth curves
+        const link = mainGroup.append("g")
+            .selectAll("path")
+            .data(mainFlowLinks)
+            .enter()
+            .append("path")
+            .attr("class", d => `link link-${d.type}`)
+            .attr("marker-end", d => `url(#arrow-${d.type})`)
+            .attr("stroke-width", 2)
+            .attr("fill", "none")
+            .attr("opacity", 0.8)
+            .attr("d", d => {
+                const source = nodes.find(n => n.id === d.source);
+                const target = nodes.find(n => n.id === d.target);
+                
+                const dx = target.x - source.x;
+                const dy = target.y - source.y;
+                
+                // Create a smooth curve
+                return `M${source.x},${source.y}
+                        C${source.x},${source.y + dy/3}
+                          ${target.x},${target.y - dy/3}
+                          ${target.x},${target.y}`;
+            })
+            // Add hover effects directly
+            .on("mouseover", function() {
+                d3.select(this)
+                    .attr("opacity", 1)
+                    .attr("stroke-width", 2.5);
+            })
+            .on("mouseout", function() {
+                d3.select(this)
+                    .attr("opacity", 0.8)
+                    .attr("stroke-width", 2);
+            });
+
+        // Update arrow markers for auth and data only
+        defs.selectAll("marker").remove(); // Remove old markers first
+        defs.selectAll("marker")
+            .data(["auth", "data"])
+            .enter().append("marker")
+            .attr("id", d => `arrow-${d}`)
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", 28) // Adjusted refX for node size
+            .attr("refY", 0)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M0,-3L6,0L0,3")
+            .attr("fill", d => {
+                switch(d) {
+                    case "auth": return "#3b82f6";
+                    case "data": return "#ef4444";
+                }
+            });
+        
+        // Create gradients for each group
+        const groups = ["frontend", "backend", "security", "management"];
+        groups.forEach(group => {
+            const gradient = defs.append("radialGradient")
+                .attr("id", `gradient-${group}`)
+                .attr("cx", "0.5")
+                .attr("cy", "0.5")
+                .attr("r", "0.5")
+                .attr("fx", "0.4")
+                .attr("fy", "0.4");
+            
+            let color1, color2;
+            switch(group) {
+                case "frontend":
+                    color1 = "#93c5fd"; // Light blue
+                    color2 = "#3b82f6"; // Blue
+                    break;
+                case "backend":
+                    color1 = "#fca5a5"; // Light red
+                    color2 = "#ef4444"; // Red
+                    break;
+                case "security":
+                    color1 = "#6ee7b7"; // Light green
+                    color2 = "#10b981"; // Green
+                    break;
+                case "management":
+                    color1 = "#c4b5fd"; // Light indigo
+                    color2 = "#6366f1"; // Indigo
+                    break;
+            }
+            
+            gradient.append("stop")
+                .attr("offset", "0%")
+                .attr("stop-color", color1);
+            
+            gradient.append("stop")
+                .attr("offset", "100%")
+                .attr("stop-color", color2);
+        });
+        
+        // Filter for soft shadow
+        defs.append("filter")
+            .attr("id", "drop-shadow")
+            .attr("height", "130%")
+            .append("feDropShadow")
+            .attr("dx", "0")
+            .attr("dy", "1")
+            .attr("stdDeviation", "2")
+            .attr("flood-color", "rgba(0, 0, 0, 0.3)")
+            .attr("flood-opacity", "0.3");
+            
+        // Create nodes with improved styling
+        const node = mainGroup.append("g")
+            .selectAll(".node")
+            .data(nodes)
+            .enter()
+            .append("g")
+            .attr("class", "node")
+            .attr("transform", d => `translate(${d.x}, ${d.y})`)
+            .on("mouseover", showTooltip)
+            .on("mouseout", hideTooltip);
+        
+        // Add circles to nodes with gradient fill
+        node.append("circle")
+            .attr("r", 24) // Increased node size
+            .attr("fill", d => `url(#gradient-${d.group})`)
+            .attr("stroke", "white")
+            .attr("stroke-width", 2)
+            .attr("filter", "url(#drop-shadow)");
+        
+        // Add icons to nodes with larger size
+        node.append("text")
+            .attr("class", "node-icon")
+            .attr("dy", 6)
+            .text(d => d.icon);
+        
+        // Add labels below nodes with more spacing
+        node.append("text")
+            .attr("class", "node-label")
+            .attr("dy", 42) // Increased spacing for labels
+            .text(d => d.name);
+        
+        // Create tooltip
+        const tooltip = d3.select("#tooltip");
+        
+        // Tooltip functions with animation
+        function showTooltip(event, d) {
+            // Create details list
+            const detailsHTML = d.details ? `
+                <p class="tooltip-subtitle">Key Features:</p>
+                <ul>
+                    ${d.details.map(detail => `<li>${detail}</li>`).join('')}
+                </ul>
+            ` : '';
+            
+            tooltip
+                .html(`
+                    <h3>${d.name}</h3>
+                    <p>${d.description}</p>
+                    ${detailsHTML}
+                `)
+                .style("left", (event.pageX + 15) + "px")
+                .style("top", (event.pageY - 15) + "px")
+                .classed("visible", true);
+                
+            // Highlight connected paths
+            link.style("opacity", 0.15);
+            
+            // Find connected links and highlight them
+            link.filter(l => 
+                (l.source === d.id || l.target === d.id)
+            )
+            .style("opacity", 1)
+            .style("stroke-width", 2);
+                
+            // Highlight the nodes this connects to
+            const connectedNodes = nodes.filter(n => 
+                links.some(l => 
+                    (l.source === d.id && l.target === n.id) || 
+                    (l.target === d.id && l.source === n.id)
+                )
+            ).map(n => n.id);
+            
+            // Dim all nodes slightly
+            node.style("opacity", 0.4);
+            
+            // Highlight this node and connected nodes
+            node.filter(n => n.id === d.id || connectedNodes.includes(n.id))
+                .style("opacity", 1);
+        }
+        
+        function hideTooltip() {
+            tooltip.classed("visible", false);
+            
+            // Reset link styling
+            link.style("opacity", 0.6)
+                .style("stroke-width", 1.5);
+                
+            // Reset node styling
+            node.style("opacity", 1);
+        }
+
+        // Remove zoom controls and minimap elements
+        document.querySelector('.zoom-controls').remove();
+        document.querySelector('.minimap').remove();
+
+        // Remove interactive event listeners
+        svg.on("mousedown", null);
+        svg.on("mousemove", null);
+        svg.on("mouseup", null);
+        svg.on("mouseleave", null);
+        svg.on("wheel", null);
+
+        // Remove legend drag functionality
+        const legend = document.getElementById('legends');
+        legend.removeEventListener('mousedown', dragStart);
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('mouseup', dragEnd);
+    </script>
+</body>
+</html>
